@@ -1,0 +1,32 @@
+//@version=6
+indicator("DanAI EMA Signals (v6)", overlay=true, timeframe_gaps=true)
+
+// Inputs
+fast = input.int(20, "EMA Fast", minval=1)
+slow = input.int(50, "EMA Slow", minval=1)
+showLabels = input.bool(true, "Show Buy/Sell Labels")
+
+// EMA
+emaFast = ta.ema(close, fast)
+emaSlow = ta.ema(close, slow)
+
+plot(emaFast, title="EMA Fast")
+plot(emaSlow, title="EMA Slow")
+
+// Cross conditions
+buy  = ta.crossover(emaFast, emaSlow)
+sell = ta.crossunder(emaFast, emaSlow)
+
+// Labels
+if showLabels and buy
+    label.new(bar_index, low, "BUY", style=label.style_label_up, textcolor=color.white)
+if showLabels and sell
+    label.new(bar_index, high, "SELL", style=label.style_label_down, textcolor=color.white)
+
+// Alerts
+alertcondition(buy,  title="BUY",  message="DanAI: BUY signal")
+alertcondition(sell, title="SELL", message="DanAI: SELL signal")
+
+// Notes:
+// - Educational only. Combine with your own risk management and invalidation levels.
+// - Works on any timeframe supported by TradingView.
